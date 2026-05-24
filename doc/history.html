@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XSS DOC | History</title>
+    <link rel="stylesheet" href="../assets/tailwind.css" />
+     <link rel="stylesheet" href="../style.css" />
+</head>
+<body class="text-white font-sans antialiased bg-grid relative doc-page">
+     <div id="sidebar-container"></div>
+    <!-- Атмосферные glow-элементы (единая цветовая драма) -->
+    <div class="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-0 left-0 w-[600px] h-[600px] bg-red-500/20 blur-[160px] rounded-full"></div>
+        <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/15 blur-[160px] rounded-full"></div>
+        <!-- дополнительное мягкое свечение для глубины -->
+        <div class="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-purple-700/10 blur-[140px] rounded-full"></div>
+    </div>
+
+    <!-- основной контейнер с максимальной шириной и отступами -->
+    <div class="site-shell doc-content px-4 lg:px-8">
+
+        <!-- основной контент: карточки, единый ритм отступов -->
+        <main class="max-w-5xl mx-auto px-5 py-12 md:py-20 text-white text-justify leading-relaxed">
+            <!-- Секция: XSS definition -->
+            <div id="about" class="scroll-mt-24 space-y-16">
+
+    <!-- HERO -->
+    <section class="relative overflow-hidden rounded-3xl border border-red-500/20 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black p-10 shadow-2xl">
+        
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,#ef4444,transparent_40%)]"></div>
+
+        <div class="relative z-10">
+            <span class="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-1 text-sm text-red-300 backdrop-blur">
+                WEB SECURITY • XSS HISTORY
+            </span>
+
+            <h1 class="mt-6 text-5xl font-black leading-tight text-white">
+                История <span class="text-red-400">Cross-Site Scripting</span>
+            </h1>
+
+            <p class="mt-6 max-w-4xl text-xl leading-9 text-zinc-300">
+                XSS не появился внезапно как очередная CVE с патчем и пресс-релизом.
+                Эта уязвимость эволюционировала вместе с самим вебом —
+                от первых экспериментов с HTML до одной из самых опасных
+                угроз современной веб-безопасности.
+            </p>
+        </div>
+    </section>
+
+    <!-- INTRO -->
+    <section class="space-y-6">
+        <h2 class="text-3xl font-bold text-white">
+            Когда интернет был простым
+        </h2>
+
+        <div class="space-y-5 text-lg leading-9 text-zinc-300">
+            <p>
+                Середина 90-х. <span class="text-red-400 font-semibold">Netscape Navigator</span>
+                и <span class="text-red-400 font-semibold">Internet Explorer</span>
+                только начинают войну браузеров.
+                Большинство сайтов — это статичный HTML:
+                текст, картинки и ссылки.
+            </p>
+
+            <p>
+                Всё выглядело безобидно, пока в 1995 году не появился
+                <span class="text-yellow-300 font-semibold">JavaScript</span>.
+            </p>
+
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6">
+                <p class="text-zinc-300 leading-8">
+                    Брендан Айк написал язык всего за десять дней —
+                    и это до сих пор ощущается во многих его особенностях.
+                    JavaScript позволил оживить веб:
+                    валидировать формы, создавать анимации и динамически
+                    изменять страницу прямо в браузере.
+                </p>
+            </div>
+
+            <p>
+                Проблема была в том, что о безопасности почти никто не думал.
+                Пользовательский ввод считался обычным текстом,
+                а не потенциальной угрозой.
+            </p>
+        </div>
+    </section>
+    <div class="h-1 w-24 bg-red-500/60 rounded-full mt-10 mb-2 mx-auto"></div>
+    <!-- XSS TERM -->
+    <section class="space-y-6">
+        <h2 class="text-3xl font-bold text-white">
+            Появление термина XSS
+        </h2>
+
+        <div class="space-y-5 text-lg leading-9 text-zinc-300">
+            <p>
+                В конце 90-х закрепилось название
+                <span class="text-red-400 font-semibold">Cross-Site Scripting</span>.
+                Аббревиатуру <span class="font-bold text-white">XSS</span>
+                выбрали, чтобы не путать её с CSS.
+            </p>
+
+            <p>
+                Интернет быстро становился интерактивным:
+                форумы, комментарии, профили пользователей,
+                гостевые книги. И вместе с этим росло количество
+                XSS-уязвимостей.
+            </p>
+
+            <div class="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
+                <h3 class="mb-3 text-xl font-semibold text-red-300">
+                    Типичная ошибка тех лет
+                </h3>
+
+                <p class="mb-4 text-zinc-300">
+                    Сайт разрешал HTML в сообщениях,
+                    но никак не проверял содержимое тегов.
+                </p>
+
+                <pre class="overflow-x-auto rounded-xl bg-black/60 p-4 text-sm text-green-400"><code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+    </section>
+    <div class="h-1 w-24 bg-red-500/60 rounded-full mt-10 mb-2 mx-auto"></div>
+    <!-- SAMY -->
+    <section class="space-y-6">
+        <h2 class="text-3xl font-bold text-white">
+            Samy Worm — момент, когда XSS стал знаменитым
+        </h2>
+
+        <div class="space-y-5 text-lg leading-9 text-zinc-300">
+            <p>
+                В 2005 году Самир Камкар нашёл XSS-уязвимость
+                в <span class="text-red-400 font-semibold">MySpace</span>.
+            </p>
+
+            <p>
+                Его червь автоматически добавлял автора в друзья,
+                копировал себя в профили жертв и распространялся дальше.
+            </p>
+
+            <div class="grid gap-6 md:grid-cols-3">
+                
+                <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+                    <div class="text-4xl font-black text-red-400">1M+</div>
+                    <p class="mt-2 text-zinc-400">
+                        заражённых профилей
+                    </p>
+                </div>
+
+                <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+                    <div class="text-4xl font-black text-red-400">20h</div>
+                    <p class="mt-2 text-zinc-400">
+                        на распространение
+                    </p>
+                </div>
+
+                <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+                    <div class="text-4xl font-black text-red-400">2005</div>
+                    <p class="mt-2 text-zinc-400">
+                        год XSS-эпидемии
+                    </p>
+                </div>
+
+            </div>
+
+            <blockquote class="border-l-4 border-red-500 pl-6 italic text-zinc-400">
+                Это был первый случай, когда XSS показал себя
+                не как harmless alert(),
+                а как полноценное саморазмножающееся оружие.
+            </blockquote>
+        </div>
+    </section>
+<div class="h-1 w-24 bg-red-500/60 rounded-full mt-10 mb-2 mx-auto"></div>
+    <!-- WEB 2 -->
+    <section class="space-y-6">
+        <h2 class="text-3xl font-bold text-white">
+            Web 2.0 и золотая эра XSS
+        </h2>
+
+        <div class="space-y-5 text-lg leading-9 text-zinc-300">
+            <p>
+                AJAX, jQuery и динамические интерфейсы
+                перенесли всё больше логики в браузер.
+            </p>
+
+            <p>
+                Именно тогда начал массово распространяться
+                <span class="text-red-400 font-semibold">DOM-based XSS</span>.
+            </p>
+
+            <div class="rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-6">
+                <p class="mb-4 text-zinc-300">
+                    Одна строка могла превратить пользовательский ввод в код:
+                </p>
+
+                <pre class="overflow-x-auto rounded-xl bg-black/60 p-4 text-sm text-green-400"><code>element.innerHTML = location.hash;</code></pre>
+            </div>
+
+            <ul class="space-y-4">
+                <li class="flex gap-3">
+                    <span class="mt-2 h-2 w-2 rounded-full bg-red-400"></span>
+                    <span>Кража cookie и session hijacking</span>
+                </li>
+
+                <li class="flex gap-3">
+                    <span class="mt-2 h-2 w-2 rounded-full bg-red-400"></span>
+                    <span>Фишинговые формы внутри доверенных сайтов</span>
+                </li>
+
+                <li class="flex gap-3">
+                    <span class="mt-2 h-2 w-2 rounded-full bg-red-400"></span>
+                    <span>Редиректы на exploit-kit страницы</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+<div class="h-1 w-24 bg-red-500/60 rounded-full mt-10 mb-2 mx-auto"></div>
+    <!-- MODERN -->
+    <section class="space-y-6">
+        <h2 class="text-3xl font-bold text-white">
+            Почему XSS жив до сих пор
+        </h2>
+
+        <div class="grid gap-6 md:grid-cols-2">
+
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-6">
+                <h3 class="mb-4 text-xl font-semibold text-white">
+                    Современные защиты
+                </h3>
+
+                <ul class="space-y-3 text-zinc-300">
+                    <li>• Content Security Policy</li>
+                    <li>• HttpOnly / SameSite cookies</li>
+                    <li>• CSP sandbox</li>
+                    <li>• Автоматическое экранирование</li>
+                    <li>• Статический анализ кода</li>
+                </ul>
+            </div>
+
+            <div class="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
+                <h3 class="mb-4 text-xl font-semibold text-red-300">
+                    Почему это не спасает
+                </h3>
+
+                <ul class="space-y-3 text-zinc-300">
+                    <li>• Legacy-код никуда не исчез</li>
+                    <li>• Современные SPA слишком сложны</li>
+                    <li>• Ошибки разработчиков неизбежны</li>
+                    <li>• Появляются новые техники обхода</li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FINAL -->
+    <section class="relative overflow-hidden rounded-3xl border border-red-500/20 bg-gradient-to-br from-red-500/10 via-zinc-950 to-black p-10">
+        
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,#ef4444,transparent_60%)]"></div>
+
+        <div class="relative z-10">
+            <h2 class="text-4xl font-black text-white">
+                Почему XSS остаётся “королём”
+            </h2>
+
+            <div class="mt-8 grid gap-4 md:grid-cols-2">
+                
+                <div class="rounded-2xl bg-black/30 p-5 backdrop-blur">
+                    <h3 class="text-red-400 font-semibold">Универсальность</h3>
+                    <p class="mt-2 text-zinc-300">
+                        Работает независимо от платформы,
+                        языка или фреймворка.
+                    </p>
+                </div>
+
+                <div class="rounded-2xl bg-black/30 p-5 backdrop-blur">
+                    <h3 class="text-red-400 font-semibold">Гибкость</h3>
+                    <p class="mt-2 text-zinc-300">
+                        Может быть как самостоятельной атакой,
+                        так и частью сложной цепочки эксплуатации.
+                    </p>
+                </div>
+
+                <div class="rounded-2xl bg-black/30 p-5 backdrop-blur">
+                    <h3 class="text-red-400 font-semibold">Опасность</h3>
+                    <p class="mt-2 text-zinc-300">
+                        От defacement до полного захвата аккаунтов.
+                    </p>
+                </div>
+
+                <div class="rounded-2xl bg-black/30 p-5 backdrop-blur">
+                    <h3 class="text-red-400 font-semibold">Эволюция</h3>
+                    <p class="mt-2 text-zinc-300">
+                        XSS постоянно адаптируется под новые технологии.
+                    </p>
+                </div>
+
+            </div>
+
+            <p class="mt-10 text-xl leading-9 text-zinc-300">
+                История XSS — это история самого веба.
+                И пока браузер способен превращать пользовательский ввод
+                в исполняемый код, XSS продолжит существовать —
+                просто в новых формах.
+            </p>
+        </div>
+    </section>
+
+</div>
+
+
+
+            
+            <script src="../assets/dom-safe.js"></script>
+            <script src="../assets/sidebar.js" defer></script>
+            <!-- заключительный блок с резюме -->
+            <footer class="px-10 lg:px-24 py-14 border-t border-white/10 mt-10 text-center">
+
+            <h3 class="text-2xl font-black text-red-400 mb-4">
+                XSS SHIELD
+            </h3>
+
+            <p class="text-gray-400 mb-6">
+
+                Исследование и защита от
+                Cross-Site Scripting атак.
+
+            </p>
+
+            <div
+                class="flex justify-center gap-6 text-gray-400 text-sm">
+
+                <a href="https://github.com/RuslanSadvakasov"
+                class="hover:text-red-400 transition">
+
+                GitHub
+
+                </a>
+
+                <a href="https://t.me/sadvakasovruslan"
+                class="hover:text-red-400 transition">
+                Telegram
+                </a>
+
+            </div>
+
+            <p class="text-gray-500 text-sm mt-8">
+                © 2026 Sadvakasov Ruslan
+            </p>
+
+            </footer>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XSS SHIELD | Тесты</title>
+    <link rel="stylesheet" href="../assets/tailwind.css" />
+    <link rel="stylesheet" href="../style.css" />
+</head>
+<body class="text-white font-sans antialiased bg-grid relative doc-page">
+
+    <div id="sidebar-container"></div>
+    <script src="../assets/dom-safe.js"></script>
+    <script src="../assets/sidebar.js" defer></script>
+
+    <div class="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-0 left-0 w-[500px] h-[500px] bg-red-500/20 blur-[140px] rounded-full"></div>
+        <div class="absolute bottom-0 right-0 w-[400px] h-[400px] bg-cyan-500/10 blur-[140px] rounded-full"></div>
+    </div>
+
+    <div class="site-shell doc-content px-4 sm:px-6 py-10 md:py-16">
+        <header class="text-center mb-12">
+            <p class="uppercase tracking-[0.3em] text-red-500 text-sm mb-3">Интерактив</p>
+            <h1 class="text-4xl md:text-6xl font-black bg-gradient-to-r from-white to-red-400 bg-clip-text text-transparent">
+                Тесты по XSS
+            </h1>
+            <p class="text-gray-400 mt-4 max-w-xl mx-auto">
+                Пройдите блоки после изучения материала.
+            </p>
+        </header>
+
+        <div data-quiz="types"></div>
+        <div data-quiz="protection"></div>
+        <div data-quiz="vectors"></div>
+
+        <footer class="text-center py-12 border-t border-white/10 mt-8">
+            <p class="text-gray-500 text-sm">© 2026 Sadvakasov Ruslan • XSS SHIELD</p>
+        </footer>
+    </div>
+
+    <script src="../assets/quiz-data.js"></script>
+    <script src="../assets/quiz.js"></script>
+</body>
+</html>

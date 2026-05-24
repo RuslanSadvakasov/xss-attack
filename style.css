@@ -1,0 +1,531 @@
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+body {
+  background: #050816;
+  overflow-x: hidden;
+  max-width: 100vw;
+  color: white;
+  scroll-behavior: smooth;
+}
+
+/* Горизонтальный скролл только внутри таблиц/кода */
+.table-scroll {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll table {
+  width: max-content;
+  min-width: 100%;
+}
+
+pre.code-block,
+.code-block {
+  max-width: 100%;
+  overflow-x: auto;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 767px) {
+  pre.code-block,
+  .code-block {
+    white-space: pre;
+    word-break: normal;
+  }
+}
+
+/* ---------- CUSTOM SCROLLBAR (киберпанк стиль) ---------- */
+::-webkit-scrollbar {
+  width: 8px;
+  background: #0f0f0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dc2626;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ef4444;
+}
+
+/* ---------- GRID BACKGROUND (объединённая версия) ---------- */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Альтернативная версия с красным оттенком (для about/list) */
+body:not(.no-red-grid) .bg-grid {
+  background-image:
+    linear-gradient(rgba(220, 38, 38, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220, 38, 38, 0.05) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+
+/* ---------- GLASS EFFECTS (киберпанк версия) ---------- */
+.glass {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+.card-glass {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.card-glass:hover {
+  border-color: rgba(220, 38, 38, 0.5);
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* ---------- RED GLOW & HOVER ---------- */
+.glow-red {
+  box-shadow:
+    0 0 10px rgba(255, 0, 60, .4),
+    0 0 30px rgba(255, 0, 60, .25),
+    0 0 60px rgba(255, 0, 60, .15);
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  box-shadow:
+    0 0 25px rgba(255, 0, 60, .35),
+    0 0 60px rgba(255, 0, 60, .15);
+  transform: translateY(-4px);
+}
+
+/* ---------- BADGE ---------- */
+.badge-red {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
+}
+
+/* ---------- ANIMATIONS ---------- */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+.floating {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes glitchTop {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, -2px); }
+  40% { transform: translate(-4px, 2px); }
+  60% { transform: translate(2px, -1px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes glitchBottom {
+  0% { transform: translate(0); }
+  20% { transform: translate(2px, 2px); }
+  40% { transform: translate(4px, -2px); }
+  60% { transform: translate(-2px, 1px); }
+  100% { transform: translate(0); }
+}
+
+/* ---------- GLITCH EFFECT ---------- */
+.glitch {
+  position: relative;
+  display: inline-block;
+  color: white;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+  opacity: 0.8;
+}
+
+.glitch::before {
+  color: #00ffff;
+  z-index: -1;
+  animation: glitchTop 2s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  color: #ff00ff;
+  z-index: -2;
+  animation: glitchBottom 1.5s infinite linear alternate-reverse;
+}
+
+/* ---------- TEXT EFFECTS ---------- */
+.text-glow {
+  text-shadow:
+    0 0 6px rgba(255, 0, 60, .6),
+    0 0 20px rgba(255, 0, 60, .4),
+    0 0 40px rgba(255, 0, 60, .25);
+}
+
+/* ---------- CODE STYLES (объединённые) ---------- */
+code,
+.code-block {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0.2rem 0.4rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  border-left: 2px solid #ef4444;
+  color: #facc15;
+  word-break: break-word;
+}
+
+pre {
+  background: #0a0a0a;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 1rem;
+  padding: 1rem;
+  overflow-x: auto;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+pre code {
+  background: transparent;
+  border-left: none;
+  padding: 0;
+  color: #facc15;
+  font-size: 0.85rem;
+}
+
+/* ---------- LINKS ---------- */
+a {
+  transition: all 0.2s;
+}
+
+/* ---------- TYPOGRAPHY ---------- */
+h1, h2, h3 {
+  letter-spacing: -0.02em;
+}
+
+/* ---------- UTILITY CLASSES ---------- */
+.shrink {
+  transition: transform 0.25s ease-out, filter 0.25s ease-out;
+  transform-origin: center;
+}
+/* ---------- SCROLL ---------- */
+.blur-on-scroll {
+  transition: filter 0.25s ease-out;
+}
+
+.smooth {
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+.custom-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: rgba(239, 68, 68, 0.4);
+    border-radius: 999px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(239, 68, 68, 0.7);
+}
+
+/* ---------- DOC LAYOUT (sidebar + mobile) ---------- */
+.doc-page .doc-content {
+  transition: margin 0.3s ease;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+  box-sizing: border-box;
+}
+
+@media (max-width: 767px) {
+  .doc-page .doc-content,
+  .doc-page main.doc-content {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  /* один отступ: обёртка 12px, вложенный main без второго px */
+  .doc-page .doc-content > main {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.doc-page .doc-content code {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.doc-section-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+  min-width: 0;
+}
+
+.doc-section-title .doc-section-icon {
+  flex-shrink: 0;
+  font-size: 1.75rem;
+  line-height: 1.25;
+}
+
+.doc-section-title h2 {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+  font-size: clamp(1.1rem, 4.2vw, 1.875rem);
+  line-height: 1.3;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.site-shell {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .doc-page .doc-content {
+    margin-left: 18rem;
+    margin-right: 0;
+    width: calc(100% - 18rem);
+    max-width: calc(100% - 18rem);
+  }
+}
+
+html.sidebar-open,
+body.sidebar-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* Мобилка: кнопка ☰ под панелью меню (z-30 < sidebar z-50) */
+@media (max-width: 767px) {
+  .sidebar-toggle--hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .sidebar-toggle {
+    width: 3.25rem;
+    height: 3.25rem;
+    font-size: 1.5rem;
+  }
+
+  #sidebar-close {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1.25rem;
+  }
+
+  /* Декоративные glow не раздувают страницу */
+  body > .fixed.overflow-hidden,
+  .doc-page > .fixed {
+    max-width: 100vw;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 767px) {
+  .doc-page .doc-content,
+  .doc-page > main,
+  .doc-page > .max-w-\[1600px\],
+  .doc-page > .max-w-\[1400px\] {
+    padding-top: 3.5rem;
+  }
+}
+
+/* Landing mobile */
+@media (max-width: 767px) {
+  #start h1 {
+    font-size: clamp(2.5rem, 12vw, 3.5rem);
+  }
+
+  #start .floating {
+    margin-top: 0.5rem;
+  }
+}
+
+/* ---------- Kill Chain ---------- */
+.kill-chain-track {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.kill-chain-step {
+  flex: 1 1 8rem;
+  min-width: 0;
+  max-width: 11rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1rem 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+  color: #d1d5db;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  text-align: center;
+}
+
+.kill-chain-step:hover {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.kill-chain-step.is-active {
+  border-color: rgba(239, 68, 68, 0.7);
+  background: rgba(239, 68, 68, 0.12);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.kill-chain-step-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.kill-chain-step-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fca5a5;
+  line-height: 1.2;
+}
+
+.kill-chain-step-short {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  line-height: 1.2;
+}
+
+.kill-chain-arrow {
+  display: none;
+  align-self: center;
+  color: #6b7280;
+  font-size: 1.25rem;
+  padding: 0 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .kill-chain-arrow {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.kill-chain-dot {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.4);
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.kill-chain-dot.is-active {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.25);
+  color: #fff;
+}
+
+.kill-chain-nav-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.35);
+  color: #d1d5db;
+  font-size: 0.875rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.kill-chain-nav-btn:hover {
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+}
+
+.kill-chain-code {
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.checklist-preview li {
+  padding-left: 0;
+}
+
+/* Vector library — payload не обрезается, скролл внутри блока */
+.doc-page .category {
+  max-width: 100%;
+  min-width: 0;
+  overflow: visible;
+}
+
+.doc-page .category-content {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.doc-page .vector-card {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.doc-page .code-text {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+  white-space: nowrap;
+  word-break: normal;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(239, 68, 68, 0.5) rgba(0, 0, 0, 0.4);
+}

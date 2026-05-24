@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>XSS Shield | Исследование XSS-атак</title>
+
+    <link rel="stylesheet" href="assets/tailwind.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="text-white font-sans bg-grid overflow-x-hidden">
+
+  <!-- Background Glow -->
+  <div class="fixed inset-0 overflow-hidden -z-10">
+
+    <div
+      class="absolute top-0 left-0 w-[600px] h-[600px] bg-red-500/20 blur-[160px] rounded-full">
+    </div>
+
+    <div
+      class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/10 blur-[160px] rounded-full">
+    </div>
+
+  </div>
+
+  <!-- Wrapper -->
+  <div class="site-shell max-w-[1600px] mx-auto w-full">
+
+    <!-- Navbar -->
+    <header
+      class="sticky top-0 z-50 flex items-center justify-between px-4 sm:px-10 py-4 sm:py-6 border-b border-white/10 glass bg-black/30">
+
+      <h1 class="text-xl sm:text-2xl font-black tracking-widest text-red-500">
+        <a href="start.html" class="hover:text-red-400 transition">
+          XSS SHIELD
+        </a>
+      </h1>
+
+      <button id="mobile-nav-btn" type="button" aria-label="Menu"
+        class="md:hidden w-12 h-12 rounded-xl border border-white/10 flex items-center justify-center text-xl shrink-0">
+        ☰
+      </button>
+
+      <nav id="mobile-nav" class="hidden md:flex gap-6 lg:gap-8 text-sm text-gray-300">
+
+        <a href="#about" class="hover:text-red-400 transition">About</a>
+        <a href="#attacks" class="hover:text-red-400 transition">Attacks</a>
+        <a href="doc/protection.html" class="hover:text-red-400 transition">Protection</a>
+        <a href="doc/quiz.html" class="hover:text-red-400 transition text-red-400/90">Quizzes</a>
+        <a href="doc/index.html" class="hover:text-red-400 transition">Docs</a>
+
+      </nav>
+
+    </header>
+
+    <nav id="mobile-nav-panel"
+      class="hidden md:hidden fixed top-[4.5rem] left-0 right-0 z-40 glass border-b border-white/10 px-4 py-4 flex flex-col gap-3 text-sm">
+      <a href="#about" class="text-gray-300 hover:text-red-400">About</a>
+      <a href="#attacks" class="text-gray-300 hover:text-red-400">Attacks</a>
+      <a href="doc/protection.html" class="text-gray-300 hover:text-red-400">Protection</a>
+      <a href="doc/quiz.html" class="text-red-400">Quizzes</a>
+      <a href="doc/index.html" class="text-gray-300 hover:text-red-400">Docs</a>
+    </nav>
+
+    <!-- Hero -->
+    <section id="start"
+      class="px-4 sm:px-10 lg:px-24 py-16 sm:py-24 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+      <!-- Left -->
+      <div>
+
+        <p class="uppercase tracking-[0.12em] sm:tracking-[0.4em] text-red-500 text-sm mb-4">
+          Cybersecurity • Web Protection
+        </p>
+
+        <h1 class="text-4xl sm:text-6xl lg:text-8xl font-black leading-none mb-6 break-words">
+
+          XSS
+
+          <span class="block text-white">
+            ATTACK
+          </span>
+
+        </h1>
+
+        <p class="text-gray-400 text-lg leading-8 max-w-xl mb-10">
+
+          Cross-Site Scripting позволяет злоумышленникам внедрять
+          вредоносный JavaScript-код в веб-страницы и выполнять
+          его в браузере других пользователей.
+
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 items-stretch sm:items-start w-full max-w-sm sm:max-w-none">
+
+          <div class="flex flex-col gap-3 w-full sm:w-auto">
+            <a href="doc/index.html"
+              class="px-6 sm:px-8 py-3 sm:py-4 rounded-2xl bg-red-500 hover:bg-red-400 transition glow-red font-semibold text-center w-full sm:w-auto">
+
+              Узнать больше
+
+            </a>
+
+            <a href="doc/quiz.html"
+              class="px-6 sm:px-8 py-3 sm:py-4 rounded-2xl border border-red-500/30 glass hover:bg-red-500/10 transition text-center w-full sm:w-auto">
+
+              Пройти тесты
+
+            </a>
+          </div>
+
+          <a href="#attacks"
+            class="px-6 sm:px-8 py-3 sm:py-4 rounded-2xl border border-white/10 glass hover:bg-white/10 transition text-center w-full sm:w-auto sm:self-start">
+
+            Смотреть угрозы
+
+          </a>
+
+        </div>
+
+      </div>
+
+      <!-- Right -->
+      <div class="relative floating w-full max-w-md mx-auto lg:mx-0 lg:max-w-none lg:ml-auto pt-8 pr-6 pb-4 pl-2 sm:pt-10 sm:pr-10 sm:pb-6">
+
+        <div
+          class="absolute top-4 right-2 bottom-4 left-2 sm:-inset-4 bg-red-500/10 blur-3xl rounded-full pointer-events-none">
+        </div>
+
+        <div
+          class="relative glass border border-white/10 rounded-[28px] sm:rounded-[32px] p-5 sm:p-8 shadow-2xl">
+
+          <!-- Browser dots -->
+          <div class="flex gap-2 mb-6">
+
+            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+
+            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+
+            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+
+          </div>
+
+          <!-- Main card -->
+          <div
+            class="bg-black/50 rounded-2xl p-6 border border-red-500/20">
+
+            <p class="text-red-400 font-mono text-sm sm:text-lg md:text-xl mb-4 break-all">
+
+              &lt;script&gt;alert('XSS')&lt;/script&gt;
+
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mt-6 sm:mt-8">
+
+              <div
+                class="w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center text-2xl sm:text-3xl">
+
+                ⚠️
+
+              </div>
+
+              <div>
+
+                <h3 class="text-xl font-bold">
+                  Threat Detected
+                </h3>
+
+                <p class="text-gray-400 text-sm">
+                  Browser vulnerability attempt blocked.
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Floating label -->
+          <div
+            class="absolute top-0 right-0 sm:-top-4 sm:-right-4 translate-x-1 -translate-y-1 sm:translate-x-0 sm:translate-y-0 bg-cyan-400 text-black px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold shadow-xl animate-pulse">
+
+            SECURE
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- About -->
+    <section id="about" class="px-4 sm:px-10 lg:px-24 py-20">
+
+      <div
+        class="glass border border-white/10 rounded-[32px] p-10">
+
+        <h2 class="text-4xl font-black mb-6">
+          Что такое XSS?
+        </h2>
+
+        <p class="text-gray-400 text-lg leading-8 max-w-4xl">
+
+          XSS (Cross-Site Scripting) —
+          это одна из самых опасных уязвимостей веб-приложений.
+          Она позволяет злоумышленнику внедрять вредоносный
+          JavaScript-код на сайт, воровать cookies, токены
+          и получать доступ к пользовательским данным.
+
+        </p>
+
+      </div>
+
+    </section>
+
+    <!-- Attack Types -->
+    <section id="attacks" class="px-4 sm:px-10 lg:px-24 py-20">
+
+      <div class="mb-14">
+
+        <p class="uppercase tracking-[0.3em] text-red-500 text-sm mb-3">
+          Attack Types
+        </p>
+
+        <h2 class="text-5xl font-black">
+          Типы XSS-атак
+        </h2>
+
+      </div>
+
+      <!-- Cards -->
+      <div
+        class="grid md:grid-cols-2 xl:grid-cols-3 gap-8 items-stretch">
+
+        <!-- Card -->
+        <a href="doc/stored.html"
+          class="block glass card-hover border border-white/10 rounded-[28px] p-8 h-full hover:border-red-500/40 hover:-translate-y-2 transition-all duration-300">
+
+          <div class="text-5xl mb-6">
+            💀
+          </div>
+
+          <h3 class="text-2xl font-bold mb-4 text-red-400">
+            Stored XSS
+          </h3>
+
+          <p class="text-gray-400 leading-7">
+
+            Вредоносный скрипт сохраняется
+            в базе данных и выполняется
+            у всех пользователей сайта.
+
+          </p>
+
+        </a>
+
+        <!-- Card -->
+        <a href="doc/reflected.html"
+          class="block glass card-hover border border-white/10 rounded-[28px] p-8 h-full hover:border-red-500/40 hover:-translate-y-2 transition-all duration-300">
+
+          <div class="text-5xl mb-6">
+            ⚠️
+          </div>
+
+          <h3 class="text-2xl font-bold mb-4 text-red-400">
+            Reflected XSS
+          </h3>
+
+          <p class="text-gray-400 leading-7">
+
+            Скрипт передается через URL,
+            форму или параметры запроса
+            и сразу выполняется браузером.
+
+          </p>
+
+        </a>
+
+        <!-- Card -->
+        <a href="doc/dom.html"
+          class="block glass card-hover border border-white/10 rounded-[28px] p-8 h-full hover:border-red-500/40 hover:-translate-y-2 transition-all duration-300">
+
+          <div class="text-5xl mb-6">
+            🧠
+          </div>
+
+          <h3 class="text-2xl font-bold mb-4 text-red-400">
+            DOM XSS
+          </h3>
+
+          <p class="text-gray-400 leading-7">
+
+            Уязвимость возникает внутри
+            JavaScript-кода браузера без
+            участия серверной части.
+
+          </p>
+
+        </a>
+
+      </div>
+
+    </section>
+
+    <!-- Protection -->
+    <section id="protection"
+      class="px-4 sm:px-10 lg:px-24 py-20">
+
+      <div class="mb-16">
+
+        <p class="uppercase tracking-[0.3em] text-cyan-400 text-sm mb-3">
+          Protection
+        </p>
+
+        <h2 class="text-4xl sm:text-5xl font-black">
+          <a href="doc/protection.html" class="hover:text-red-400 transition">Как защититься</a>
+        </h2>
+        <p class="text-gray-400 mt-4 max-w-2xl flex flex-wrap gap-x-4 gap-y-2">
+          <a href="doc/kill-chain.html" class="text-orange-400 hover:underline">Путь атаки (Kill Chain) →</a>
+          <a href="doc/security-demo.html" class="text-cyan-400 hover:underline">Демо CSP и cookies →</a>
+        </p>
+
+      </div>
+
+      <div class="space-y-8">
+
+        <!-- Item -->
+        <div
+          class="glass border border-white/10 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
+
+          <div
+            class="w-14 h-14 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center font-black text-red-400 text-xl">
+
+            1
+
+          </div>
+
+          <div class="min-w-0 flex-1">
+
+            <h3 class="text-xl sm:text-2xl font-bold mb-1 break-words">
+              Escape HTML
+            </h3>
+
+            <p class="text-gray-400">
+              Экранируйте пользовательские данные.
+            </p>
+
+          </div>
+
+        </div>
+
+        <!-- Item -->
+        <div
+          class="glass border border-white/10 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
+
+          <div
+            class="w-14 h-14 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center font-black text-red-400 text-xl">
+
+            2
+
+          </div>
+
+          <div class="min-w-0 flex-1">
+
+            <h3 class="text-xl sm:text-2xl font-bold mb-1 break-words">
+              Content Security Policy
+            </h3>
+
+            <p class="text-gray-400">
+              Используйте CSP для блокировки опасных скриптов.
+            </p>
+
+          </div>
+
+        </div>
+
+        <!-- Item -->
+        <div
+          class="glass border border-white/10 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
+          <div
+            class="w-14 h-14 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center font-black text-red-400 text-xl">
+            3
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 class="text-xl sm:text-2xl font-bold mb-1 break-words">
+              Sanitize Input
+            </h3>
+            <p class="text-gray-400">
+              Очищайте пользовательский ввод перед обработкой.
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="glass border border-white/10 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
+          <div
+            class="w-14 h-14 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center font-black text-red-400 text-xl">
+            4
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 class="text-xl sm:text-2xl font-bold mb-1 break-words">
+              Escape innerHTML 
+            </h3>
+            <p class="text-gray-400">
+              Никогда не вставлять пользовательский ввод через innerHTML.
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="glass border border-white/10 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
+          <div
+            class="w-14 h-14 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center font-black text-red-400 text-xl">
+            5
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 class="text-xl sm:text-2xl font-bold mb-1 break-words">
+              HttpOnly cookies 
+            </h3>
+            <p class="text-gray-400">
+              Даже если XSS произошёл, злоумышленник не сможет украсть cookie через JS.
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="glass border border-white/10 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
+          <div
+            class="w-14 h-14 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center font-black text-red-400 text-xl">
+            6
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 class="text-xl sm:text-2xl font-bold mb-1 break-words">
+              Использовать современные фреймворки
+            </h3>
+            <p class="text-gray-400">
+              Многие фреймворки автоматически защищают от XSS:
+                React, Vue.js, Angular.
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="glass border border-white/10 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0">
+          <div
+            class="w-14 h-14 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center font-black text-red-400 text-xl">
+            7
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 class="text-xl sm:text-2xl font-bold mb-1 break-words">
+              Trusted Types
+            </h3>
+            <p class="text-gray-400">
+              Современный механизм защиты от DOM XSS.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer
+      class="px-4 sm:px-10 lg:px-24 py-14 border-t border-white/10 mt-10 text-center">
+
+      <h3 class="text-2xl font-black text-red-400 mb-4">
+        XSS SHIELD
+      </h3>
+
+      <p class="text-gray-400 mb-6">
+
+        Исследование и защита от
+        Cross-Site Scripting атак.
+
+      </p>
+
+      <div
+        class="flex justify-center gap-6 text-gray-400 text-sm">
+
+        <a href="https://github.com/RuslanSadvakasov"
+          class="hover:text-red-400 transition">
+
+          GitHub
+
+        </a>
+
+        <a href="https://t.me/sadvakasovruslan"
+          class="hover:text-red-400 transition">
+          Telegram
+        </a>
+
+      </div>
+
+      <p class="text-gray-500 text-sm mt-8">
+        © 2026 Sadvakasov Ruslan
+      </p>
+
+    </footer>
+
+  </div>
+
+  <script>
+    const btn = document.getElementById('mobile-nav-btn');
+    const panel = document.getElementById('mobile-nav-panel');
+    btn?.addEventListener('click', () => panel?.classList.toggle('hidden'));
+    panel?.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', () => panel.classList.add('hidden'));
+    });
+  </script>
+
+</body>
+
+</html>

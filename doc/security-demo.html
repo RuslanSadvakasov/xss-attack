@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XSS SHIELD | Демо защиты</title>
+    <link rel="stylesheet" href="../assets/tailwind.css" />
+    <link rel="stylesheet" href="../style.css" />
+    <!-- Строгий CSP только на этой странице (демо для диплома) -->
+    <!-- frame-ancestors — только в HTTP-заголовке (server.js / .htaccess), не в meta -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'self';">
+</head>
+<body class="text-white font-sans antialiased bg-grid relative doc-page">
+
+    <div id="sidebar-container"></div>
+    <script src="../assets/dom-safe.js"></script>
+    <script src="../assets/sidebar.js" defer></script>
+
+    <div class="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-0 right-0 w-[450px] h-[450px] bg-cyan-500/15 blur-[120px] rounded-full"></div>
+    </div>
+
+    <div class="site-shell doc-content px-4 sm:px-6 py-10 md:py-16 space-y-10">
+
+        <header>
+            <h1 class="text-4xl md:text-5xl font-black">Демонстрация мер защиты</h1>
+            <p class="text-gray-400 mt-4 leading-7">
+                Ниже — наглядные примеры CSP, флагов cookie и безопасного вывода.
+                Для реальных HTTP-заголовков запустите <code class="text-yellow-300">npm start</code> (см. <code class="text-yellow-300">server.js</code>).
+            </p>
+        </header>
+
+        <!-- CSP -->
+        <section class="card-glass rounded-3xl p-6 md:p-8 border border-red-500/20">
+            <h2 class="text-2xl font-bold text-red-300 mb-4">Content-Security-Policy (CSP)</h2>
+            <p class="text-gray-300 leading-7 mb-4">
+                На этой странице в <code>&lt;meta&gt;</code> задан CSP: скрипты и стили только с вашего домена (<code>'self'</code>).
+                Динамический inline-скрипт без nonce обычно блокируется (см. кнопку ниже и консоль DevTools).
+            </p>
+            <pre class="text-sm text-green-300/90 bg-black/50 p-4 rounded-xl overflow-x-auto mb-4">Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; ...</pre>
+            <button type="button" id="csp-test-inline"
+                    class="px-4 py-2 rounded-xl bg-red-500/80 hover:bg-red-400 transition text-sm font-semibold">
+                Попробовать опасный inline (будет заблокирован CSP)
+            </button>
+            <p id="csp-log" class="mt-3 text-sm text-gray-400 font-mono"></p>
+        </section>
+
+        <!-- Cookies -->
+        <section class="card-glass rounded-3xl p-6 md:p-8 border border-yellow-500/20">
+            <h2 class="text-2xl font-bold text-yellow-300 mb-4">HttpOnly, Secure, SameSite</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-gray-300 text-sm leading-7 mb-4">
+                <div class="bg-black/40 p-4 rounded-xl border border-white/10">
+                    <strong class="text-yellow-300">HttpOnly</strong> — JS не читает cookie (защита сессии при XSS).
+                </div>
+                <div class="bg-black/40 p-4 rounded-xl border border-white/10">
+                    <strong class="text-yellow-300">Secure</strong> — только HTTPS. <strong>SameSite</strong> — снижает CSRF.
+                </div>
+            </div>
+            <pre class="text-xs text-gray-400 bg-black/50 p-3 rounded-lg mb-4">Set-Cookie: session=abc; HttpOnly; Secure; SameSite=Strict; Path=/</pre>
+            <button type="button" id="cookie-demo"
+                    class="px-4 py-2 rounded-xl border border-yellow-500/40 hover:bg-yellow-500/10 transition text-sm">
+                Установить демо-cookie (без HttpOnly) и показать document.cookie
+            </button>
+            <button type="button" id="cookie-httponly-note"
+                    class="ml-2 px-4 py-2 rounded-xl border border-green-500/40 hover:bg-green-500/10 transition text-sm">
+                Почему HttpOnly не виден в JS
+            </button>
+            <p id="cookie-log" class="mt-3 text-sm text-gray-400 font-mono break-all"></p>
+        </section>
+
+        <!-- Safe output -->
+        <section class="card-glass rounded-3xl p-6 md:p-8 border border-green-500/20">
+            <h2 class="text-2xl font-bold text-green-300 mb-4">Безопасный vs опасный вывод</h2>
+            <input type="text" id="user-payload" value="&lt;img src=x onerror=alert(1)&gt;"
+                   class="w-full mb-3 px-4 py-2 rounded-xl bg-black/50 border border-white/10 text-white font-mono text-sm" />
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button type="button" id="btn-safe" class="px-4 py-2 rounded-xl bg-green-600/80 hover:bg-green-500 text-sm font-semibold">textContent (безопасно)</button>
+                <button type="button" id="btn-unsafe" class="px-4 py-2 rounded-xl bg-red-600/80 hover:bg-red-500 text-sm font-semibold">innerHTML (опасно)</button>
+            </div>
+            <div id="output-box" class="min-h-[3rem] p-4 rounded-xl bg-black/60 border border-white/10 text-gray-200"></div>
+        </section>
+
+        <!-- Server headers -->
+        <section class="card-glass rounded-3xl p-6 md:p-8 border border-cyan-500/20">
+            <h2 class="text-2xl font-bold text-cyan-300 mb-4">Заголовки через сервер (Node.js)</h2>
+            <p class="text-gray-300 leading-7 mb-4">
+                Файл <code>server.js</code> отдаёт сайт с заголовками:
+                <code>X-Content-Type-Options</code>, <code>X-Frame-Options</code>,
+                <code>Referrer-Policy</code>, <code>Content-Security-Policy</code> и cookie с <code>HttpOnly</code>.
+            </p>
+            <pre class="text-sm bg-black/50 p-4 rounded-xl text-cyan-200/90 overflow-x-auto">npm install
+npm start
+# Откройте http://localhost:3000 — вкладка Network → Headers</pre>
+        </section>
+
+        <div id="xss-quiz" data-quiz="protection"></div>
+
+        <footer class="text-center py-10 border-t border-white/10 text-gray-500 text-sm">
+            © 2026 Sadvakasov Ruslan
+        </footer>
+    </div>
+
+    <script src="../assets/quiz-data.js"></script>
+    <script src="../assets/quiz.js"></script>
+    <script>
+      document.getElementById('csp-test-inline')?.addEventListener('click', () => {
+        const log = document.getElementById('csp-log');
+        try {
+          const s = document.createElement('script');
+          s.textContent = "document.getElementById('csp-log').textContent='Inline выполнился — CSP слабый или отключён';";
+          document.body.appendChild(s);
+          log.textContent = 'Скрипт добавлен. Если alert/текст не сменился — CSP сработал (см. консоль DevTools).';
+        } catch (e) {
+          log.textContent = 'Ошибка: ' + e.message;
+        }
+      });
+
+      document.getElementById('cookie-demo')?.addEventListener('click', () => {
+        document.cookie = 'xss_demo_visible=secret123; path=/; max-age=3600';
+        document.getElementById('cookie-log').textContent =
+          'document.cookie = ' + (document.cookie || '(пусто)');
+      });
+
+      document.getElementById('cookie-httponly-note')?.addEventListener('click', () => {
+        const log = document.getElementById('cookie-log');
+        log.replaceChildren();
+        log.append(
+          document.createTextNode(
+            'HttpOnly задаёт только сервер (Set-Cookie). JS не может установить HttpOnly. При XSS без HttpOnly злоумышленник читает: '
+          ),
+          (() => {
+            const code = document.createElement('code');
+            code.className = 'text-yellow-300';
+            code.textContent = 'document.cookie';
+            return code;
+          })()
+        );
+      });
+
+      const input = document.getElementById('user-payload');
+      const box = document.getElementById('output-box');
+      document.getElementById('btn-safe')?.addEventListener('click', () => {
+        box.textContent = '';
+        box.textContent = input.value;
+      });
+      // Намеренно небезопасный sink — только для демонстрации уязвимости на этой странице
+      document.getElementById('btn-unsafe')?.addEventListener('click', () => {
+        box.innerHTML = input.value;
+      });
+    </script>
+</body>
+</html>

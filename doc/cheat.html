@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>XSS SHIELD | Cheat Sheet</title>
+
+    <!-- TAILWIND -->
+    <link rel="stylesheet" href="../assets/tailwind.css" />
+
+    <!-- GLOBAL STYLE -->
+    <link rel="stylesheet" href="../style.css">
+
+    <style>
+        .code-block {
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 0.85rem;
+        }
+        .cheat-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .cheat-table th,
+        .cheat-table td {
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sink-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            min-height: 3.25rem;
+            padding: 0.65rem 0.5rem;
+            text-align: center;
+            min-width: 0;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+        .sink-cell .sink-label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            line-height: 1.2;
+        }
+        .sink-cell .sink-mono {
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 0.7rem;
+            line-height: 1.35;
+            max-width: 100%;
+        }
+        @media (min-width: 640px) {
+            .sink-cell {
+                min-height: 2.75rem;
+                padding: 0.5rem 0.65rem;
+            }
+            .sink-cell .sink-mono {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-white font-sans antialiased bg-grid relative overflow-x-hidden doc-page">
+
+    <!-- SIDEBAR -->
+    <div id="sidebar-container"></div>
+    <script src="../assets/dom-safe.js"></script>
+    <script src="../assets/sidebar.js" defer></script>
+
+    <!-- BACKGROUND GLOW -->
+    <div class="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-0 left-0 w-[600px] h-[600px] bg-red-500/20 blur-[160px] rounded-full"></div>
+        <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/15 blur-[160px] rounded-full"></div>
+        <div class="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-purple-700/10 blur-[140px] rounded-full"></div>
+    </div>
+
+    <div class="site-shell doc-content px-4 sm:px-6 lg:px-8 w-full min-w-0">
+
+        <!-- HERO -->
+        <section class="flex flex-col items-center text-center pt-16 md:pt-24 pb-10">
+
+            <p class="uppercase tracking-[0.12em] sm:tracking-[0.35em] text-red-500 text-sm font-semibold mb-5">
+                OWASP • Quick Reference
+            </p>
+
+            <h1 class="text-3xl sm:text-5xl md:text-7xl font-black leading-tight px-2
+                bg-gradient-to-r from-white via-red-200 to-red-500
+                bg-clip-text text-transparent">
+
+                XSS Prevention<br>Cheat Sheet
+            </h1>
+
+            <div class="h-1 w-24 bg-red-500/60 rounded-full mt-8"></div>
+
+            <p class="text-gray-400 max-w-2xl mt-6 text-lg">
+                Шпаргалка для разработчика: правила, антипаттерны и безопасные альтернативы
+            </p>
+
+        </section>
+
+        <main class="max-w-6xl mx-auto md:pb-24 space-y-10 w-full min-w-0 overflow-x-clip">
+
+            <!-- GOLDEN RULE -->
+            <div class="card-glass rounded-3xl p-8 md:p-10 border border-red-500/20 bg-red-500/5">
+                <div class="flex items-start gap-5 flex-wrap">
+                    <div class="text-5xl">🚫</div>
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-black text-red-400 mb-3">Правило №1</h2>
+                        <p class="text-gray-300 text-lg leading-9 break-words">
+                            <span class="font-bold text-red-300">Никогда не доверяй пользовательскому вводу.</span>
+                            Любые данные из
+                            <code class="bg-black/50 px-2 py-0.5 rounded text-red-300 inline-block">req.body</code>,
+                            <code class="bg-black/50 px-2 py-0.5 rounded text-red-300 inline-block">req.query</code>,
+                            <code class="bg-black/50 px-2 py-0.5 rounded text-red-300 inline-block">localStorage</code>,
+                            URL — потенциально опасны.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VALIDATION + ENCODING 2 columns -->
+            <div class="grid lg:grid-cols-2 gap-8">
+
+                <!-- VALIDATION -->
+                <div class="card-glass rounded-3xl p-8 border border-purple-500/20">
+                    <div class="flex items-center gap-3 mb-5">
+                        <span class="text-3xl">📋</span>
+                        <h2 class="text-2xl font-black text-purple-300">Input Validation</h2>
+                    </div>
+                    
+                    <p class="text-gray-300 leading-8 mb-5">
+                        Проверка данных <span class="text-purple-300 font-semibold">ДО обработки</span>. 
+                        Решает: принимать или отклонять.
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="bg-purple-950/20 p-4 rounded-xl border border-purple-500/20">
+                            <p class="text-purple-300 font-semibold mb-2">✅ ЧТО ДЕЛАТЬ:</p>
+                            <ul class="text-gray-300 text-sm space-y-1.5">
+                                <li>• <span class="text-purple-300">Белые списки</span> — разрешай только ожидаемые символы</li>
+                                <li>• Проверяй <span class="text-purple-300">тип данных</span> (number, email, uuid)</li>
+                                <li>• Ограничивай <span class="text-purple-300">длину</span> строки</li>
+                                <li>• Библиотеки: <span class="text-purple-300">validator.js, Joi, Zod, Yup</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-red-950/20 p-4 rounded-xl border border-red-500/20">
+                            <p class="text-red-300 font-semibold mb-2">❌ ЧЕГО НЕ ДЕЛАТЬ:</p>
+                            <ul class="text-gray-300 text-sm space-y-1.5">
+                                <li>• <span class="line-through text-red-400">Чёрные списки</span> — всегда можно обойти</li>
+                                <li>• <span class="line-through text-red-400">Попытки "починить" данные</span> вместо отказа</li>
+                                <li>• <span class="line-through text-red-400">Только фронтенд-валидация</span> — легко обходится</li>
+                            </ul>
+                        </div>
+
+                        <pre class="bg-black/60 p-3 rounded-xl text-green-400 text-xs overflow-x-auto code-block">
+✅ email@example.com → ПРОПУСТИТЬ
+❌ &lt;script&gt;alert(1)&lt;/script&gt; → ОТКЛОНИТЬ</pre>
+                    </div>
+                </div>
+
+                <!-- ENCODING -->
+                <div class="card-glass rounded-3xl p-8 border border-cyan-500/20">
+                    <div class="flex items-center gap-3 mb-5">
+                        <span class="text-3xl">🔄</span>
+                        <h2 class="text-2xl font-black text-cyan-300">Output Encoding</h2>
+                    </div>
+                    
+                    <p class="text-gray-300 leading-8 mb-5">
+                        Преобразует данные в безопасный формат, чтобы браузер 
+                        <span class="text-cyan-300 font-semibold">не воспринимал их как код</span>.
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="sink-cell bg-black/40 rounded-xl border border-white/10">
+                                <span class="sink-label text-white">HTML Body</span>
+                                <span class="sink-mono text-cyan-300">&amp;lt; → &amp;lt;</span>
+                            </div>
+                            <div class="sink-cell bg-black/40 rounded-xl border border-white/10">
+                                <span class="sink-label text-white">HTML Attribute</span>
+                                <span class="sink-mono text-cyan-300">&amp;quot;</span>
+                            </div>
+                            <div class="sink-cell bg-black/40 rounded-xl border border-white/10">
+                                <span class="sink-label text-white">JavaScript</span>
+                                <span class="sink-mono text-cyan-300">\xHH \uXXXX</span>
+                            </div>
+                            <div class="sink-cell bg-black/40 rounded-xl border border-white/10 sm:col-span-2">
+                                <span class="sink-label text-white">URL</span>
+                                <span class="sink-mono text-cyan-300">encodeURIComponent()</span>
+                            </div>
+                        </div>
+
+                        <pre class="bg-black/60 p-3 rounded-xl text-green-400 text-xs overflow-x-auto code-block">
+// ОПАСНО: "&lt;script&gt;alert(1)&lt;/script&gt;"
+// БЕЗОПАСНО: "&amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;"
+// → браузер покажет как ТЕКСТ, не выполнит</pre>
+
+                        <div class="bg-cyan-950/20 p-3 rounded-xl">
+                            <p class="text-cyan-300 text-sm font-semibold">🎯 Контекст решает всё!</p>
+                            <p class="text-gray-400 text-xs mt-1">HTML, атрибуты, JS, CSS, URL — для каждого своё кодирование</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SINKS (Safe vs Dangerous) -->
+            <div class="grid lg:grid-cols-2 gap-8">
+
+                <div class="rounded-3xl p-8 border border-green-500/20 bg-green-500/5">
+                    <div class="flex items-center gap-3 mb-5">
+                        <span class="text-3xl">✅</span>
+                        <h3 class="text-2xl font-bold text-green-300">Safe Sinks</h3>
+                    </div>
+                    <p class="text-gray-300 leading-8 mb-5">
+                        <span class="text-green-300 font-semibold">Безопасные</span> места для данных — не выполняют код.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div class="sink-cell bg-black/30 rounded-lg text-green-300"><span class="sink-mono text-green-300">textContent</span></div>
+                        <div class="sink-cell bg-black/30 rounded-lg text-green-300"><span class="sink-mono text-green-300">innerText</span></div>
+                        <div class="sink-cell bg-black/30 rounded-lg text-green-300"><span class="sink-mono text-green-300">setAttribute()</span></div>
+                        <div class="sink-cell bg-black/30 rounded-lg text-green-300"><span class="sink-mono text-green-300">className</span></div>
+                        <div class="sink-cell bg-black/30 rounded-lg text-green-300"><span class="sink-mono text-green-300">value</span></div>
+                        <div class="sink-cell bg-black/30 rounded-lg text-green-300"><span class="sink-mono text-green-300">createTextNode()</span></div>
+                    </div>
+                </div>
+
+                <div class="rounded-3xl p-8 border border-red-500/20 bg-red-500/5">
+                    <div class="flex items-center gap-3 mb-5">
+                        <span class="text-3xl">⚠️</span>
+                        <h3 class="text-2xl font-bold text-red-300">Dangerous Sinks</h3>
+                    </div>
+                    <p class="text-gray-300 leading-8 mb-5">
+                        <span class="text-red-300 font-semibold">Опасные</span> места — интерпретируют данные как код.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div class="sink-cell bg-black/30 rounded-lg text-red-300"><span class="sink-mono text-red-300">innerHTML</span></div>
+                        <div class="sink-cell bg-black/30 rounded-lg text-red-300 min-h-[3.5rem]"><span class="sink-mono text-red-300">document.write()</span></div>
+                        <div class="sink-cell bg-black/30 rounded-lg text-red-300"><span class="sink-mono text-red-300">eval()</span></div>
+                        <div class="sink-cell bg-black/30 rounded-lg text-red-300 min-h-[3.5rem]"><span class="sink-mono text-red-300">setTimeout(string)</span></div>
+                        <div class="sink-cell bg-black/30 rounded-lg text-red-300"><span class="sink-mono text-red-300">insertAdjacentHTML</span></div>
+                        <div class="sink-cell bg-black/30 rounded-lg text-red-300"><span class="sink-mono text-red-300">onclick + innerHTML</span></div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- CONTEXTUAL ENCODING EXPLANATION -->
+<div class="card-glass rounded-3xl p-5 sm:p-8 md:p-10 border border-cyan-500/20 min-w-0 overflow-hidden">
+    
+    <div class="flex items-center gap-3 mb-6">
+        <span class="text-3xl">🎯</span>
+        <h2 class="text-2xl md:text-3xl font-black text-cyan-300">Контекстное экранирование</h2>
+    </div>
+
+    <p class="text-gray-300 leading-9 mb-6">
+        Один и тот же символ в разных контекстах нужно экранировать <span class="text-cyan-300 font-semibold">по-разному</span>. 
+        Выбор метода зависит от того, <span class="text-cyan-300 font-semibold">куда</span> вы вставляете данные.
+    </p>
+
+    <!-- Таблица с примерами контекстов -->
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+
+        <div class="bg-black/40 p-5 rounded-2xl border border-white/10">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="text-red-400 text-xl">&lt;/&gt;</span>
+                <p class="text-white font-semibold">HTML Body</p>
+            </div>
+            <p class="text-gray-400 text-sm mb-2">Между тегами HTML</p>
+            <div class="bg-black/60 p-3 rounded-lg">
+                <p class="text-cyan-300 text-xs font-mono">&lt; → &amp;lt;</p>
+                <p class="text-gray-500 text-xs mt-1">Пример: &amp;lt;script&amp;gt;</p>
+            </div>
+            <p class="text-gray-500 text-xs mt-3">⚠️ Без экранирования: <span class="text-red-400">&lt;script&gt;</span> выполнится</p>
+        </div>
+
+        <div class="bg-black/40 p-5 rounded-2xl border border-white/10">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="text-red-400 text-xl">🔗</span>
+                <p class="text-white font-semibold">URL / URI</p>
+            </div>
+            <p class="text-gray-400 text-sm mb-2">Параметры ссылок</p>
+            <div class="bg-black/60 p-3 rounded-lg">
+                <p class="text-cyan-300 text-xs font-mono">%HH encoding</p>
+                <p class="text-gray-500 text-xs mt-1">Пример: %22 %3C %3E</p>
+            </div>
+            <p class="text-gray-500 text-xs mt-3">⚠️ Без экранирования: <span class="text-red-400">javascript:</span> атака</p>
+        </div>
+
+        <div class="bg-black/40 p-5 rounded-2xl border border-white/10">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="text-red-400 text-xl">📜</span>
+                <p class="text-white font-semibold">JavaScript String</p>
+            </div>
+            <p class="text-gray-400 text-sm mb-2">Внутри JS кода</p>
+            <div class="bg-black/60 p-3 rounded-lg">
+                <p class="text-cyan-300 text-xs font-mono">\uXXXX Unicode</p>
+                <p class="text-gray-500 text-xs mt-1">Пример: \u003C \u003E \u0022</p>
+            </div>
+            <p class="text-gray-500 text-xs mt-3">⚠️ Без экранирования: <span class="text-red-400">"); alert(1); //</span> выполнится</p>
+        </div>
+
+        <div class="bg-black/40 p-5 rounded-2xl border border-white/10">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="text-red-400 text-xl">🎨</span>
+                <p class="text-white font-semibold">CSS String</p>
+            </div>
+            <p class="text-gray-400 text-sm mb-2">Внутри CSS правил</p>
+            <div class="bg-black/60 p-3 rounded-lg">
+                <p class="text-cyan-300 text-xs font-mono">\XX HEX encoding</p>
+                <p class="text-gray-500 text-xs mt-1">Пример: \3C \3E \22</p>
+            </div>
+            <p class="text-gray-500 text-xs mt-3">⚠️ Без экранирования: <span class="text-red-400">expression(alert(1))</span> (старые IE)</p>
+        </div>
+
+    </div>
+
+    <!-- Таблица с одинаковыми символами в разных контекстах -->
+    <div class="bg-cyan-950/30 rounded-2xl p-6 border border-cyan-500/20 mb-6">
+        <p class="text-cyan-300 font-semibold mb-4 text-center">📊 Один и тот же символ — разное экранирование</p>
+        <div class="table-scroll -mx-1 px-1">
+            <table class="text-sm">
+                <thead>
+                    <tr class="border-b border-white/10">
+                        <th class="text-left py-2 px-3 text-gray-400">Символ</th>
+                        <th class="text-left py-2 px-3 text-gray-400">HTML</th>
+                        <th class="text-left py-2 px-3 text-gray-400">URL</th>
+                        <th class="text-left py-2 px-3 text-gray-400">JavaScript</th>
+                        <th class="text-left py-2 px-3 text-gray-400">CSS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b border-white/5">
+                        <td class="py-2 px-3 text-white font-mono">"</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">&amp;quot;</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">%22</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">\u0022</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">\22</td>
+                    </tr>
+                    <tr class="border-b border-white/5">
+                        <td class="py-2 px-3 text-white font-mono">&lt;</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">&amp;lt;</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">%3C</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">\u003C</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">\3C</td>
+                    </tr>
+                    <tr class="border-b border-white/5">
+                        <td class="py-2 px-3 text-white font-mono">&gt;</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">&amp;gt;</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">%3E</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">\u003E</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">\3E</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-3 text-white font-mono">&amp;</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">&amp;amp;</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">%26</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">\u0026</td>
+                        <td class="py-2 px-3 text-cyan-300 font-mono text-xs">\26</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Пример опасного кода -->
+    <div class="bg-red-950/30 rounded-2xl p-6 border border-red-500/20 mb-6">
+        <p class="text-red-300 font-semibold mb-3 flex items-center gap-2">
+            <span>⚠️</span> ПОЧЕМУ НЕЛЬЗЯ ИСПОЛЬЗОВАТЬ ОДИН МЕТОД ДЛЯ ВСЕХ КОНТЕКСТОВ?
+        </p>
+        <pre class="bg-black/60 p-4 rounded-xl text-gray-300 text-sm overflow-x-auto code-block">
+<span class="text-gray-500">// Разработчик сделал только HTML-экранирование</span>
+element.textContent = userInput;  <span class="text-green-400">// ✅ безопасно для HTML</span>
+
+<span class="text-gray-500">// Но забыл про JS-контекст!</span>
+&lt;script&gt;
+    var data = "<span class="text-red-400">ПОЛЬЗОВАТЕЛЬСКИЕ_ДАННЫЕ</span>";
+    <span class="text-gray-500">// Если userInput = "\"; alert(1); //"</span>
+    <span class="text-red-400">// HTML-экранирование НЕ СПАСЁТ! Нужно JS-экранирование \uXXXX</span>
+&lt;/script&gt;</pre>
+    </div>
+
+    <!-- Правило-напоминание -->
+    <div class="bg-gradient-to-r from-cyan-950/40 to-transparent rounded-2xl p-5 border border-cyan-500/30">
+        <div class="flex items-start gap-3">
+            <span class="text-cyan-400 text-2xl">💡</span>
+            <div>
+                <p class="text-cyan-300 font-bold text-lg mb-1">Золотое правило</p>
+                <p class="text-gray-300 text-sm leading-7">
+                    Всегда выбирай метод экранирования <span class="text-cyan-300 font-semibold">под конкретный контекст</span>, 
+                    куда вставляются данные. HTML-экранирование не защитит в JS, а URL-экранирование — в CSS.
+                </p>
+                <p class="text-gray-400 text-xs mt-3">
+                    📚 Библиотеки для безопасного экранирования: escape-html, he, lodash.escape
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+            <!-- SANITIZATION -->
+            <div class="card-glass rounded-3xl p-8 md:p-10 border border-yellow-500/20">
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="text-3xl">🧼</span>
+                    <h2 class="text-2xl md:text-3xl font-black text-yellow-300">HTML Sanitization</h2>
+                </div>
+
+                <p class="text-gray-300 leading-9 mb-6">
+                    Удаляет опасный HTML (<code class="bg-black/50 px-1 rounded">&lt;script&gt;</code>, event handlers), 
+                    но <span class="text-yellow-300 font-semibold">сохраняет безопасное форматирование</span> 
+                    (<code class="bg-black/50 px-1 rounded">&lt;b&gt;</code>, <code class="bg-black/50 px-1 rounded">&lt;i&gt;</code>, 
+                    <code class="bg-black/50 px-1 rounded">&lt;a&gt;</code>).
+                </p>
+
+                <div class="bg-black/60 p-5 rounded-2xl border border-white/10">
+                    <p class="text-yellow-300 text-sm font-semibold mb-2">📦 DOMPurify — лучшая библиотека</p>
+                    <pre class="text-green-400 overflow-x-auto code-block text-sm">
+import DOMPurify from 'dompurify';
+
+const dirty = '&lt;b&gt;Hello&lt;/b&gt;&lt;script&gt;alert(1)&lt;/script&gt;';
+const clean = DOMPurify.sanitize(dirty);
+// Результат: '&lt;b&gt;Hello&lt;/b&gt;'
+
+container.innerHTML = clean; // теперь безопасно!</pre>
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <div class="bg-black/40 px-3 py-1.5 rounded-full text-xs text-gray-300">✗ удаляет &lt;script&gt;</div>
+                    <div class="bg-black/40 px-3 py-1.5 rounded-full text-xs text-gray-300">✗ удаляет onclick=</div>
+                    <div class="bg-black/40 px-3 py-1.5 rounded-full text-xs text-gray-300">✗ удаляет javascript:</div>
+                    <div class="bg-yellow-400/10 px-3 py-1.5 rounded-full text-xs text-yellow-300">✓ сохраняет &lt;b&gt;, &lt;i&gt;</div>
+                </div>
+            </div>
+
+            <!-- ADVANCED DEFENSES TABLE -->
+            <div class="card-glass rounded-3xl p-8 md:p-10 border border-red-500/20">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-3xl">🛡️</span>
+                    <h2 class="text-2xl md:text-3xl font-black text-red-300">Дополнительные защиты</h2>
+                </div>
+
+                <div class="table-scroll -mx-1 px-1">
+                    <table class="cheat-table">
+                        <thead>
+                            <tr class="border-b border-white/10">
+                                <th class="text-left py-4 px-3 text-red-300 font-bold">Защита</th>
+                                <th class="text-left py-4 px-3 text-red-300 font-bold">Что делает</th>
+                                <th class="text-left py-4 px-3 text-red-300 font-bold">Пример настройки</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-white/5">
+                                <td class="py-4 px-3 font-semibold text-cyan-300">CSP</td>
+                                <td class="py-4 px-3 text-gray-300 text-sm">Блокирует inline-скрипты и загрузку с недоверенных доменов</td>
+                                <td class="py-4 px-3"><code class="bg-black/50 px-2 py-1 rounded text-xs">CSP: script-src 'self'</code></td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-4 px-3 font-semibold text-cyan-300">Trusted Types</td>
+                                <td class="py-4 px-3 text-gray-300 text-sm">Требует явного создания безопасных строк для dangerous sinks</td>
+                                <td class="py-4 px-3"><code class="bg-black/50 px-2 py-1 rounded text-xs">require-trusted-types-for 'script'</code></td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-4 px-3 font-semibold text-cyan-300">HttpOnly Cookie</td>
+                                <td class="py-4 px-3 text-gray-300 text-sm">Запрещает JavaScript доступ к cookie с сессией</td>
+                                <td class="py-4 px-3"><code class="bg-black/50 px-2 py-1 rounded text-xs">Set-Cookie: ...; HttpOnly</code></td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-3 font-semibold text-cyan-300">Safe DOM API</td>
+                                <td class="py-4 px-3 text-gray-300 text-sm">Отказ от innerHTML, использование textContent/setAttribute</td>
+                                <td class="py-4 px-3"><code class="bg-black/50 px-2 py-1 rounded text-xs">✅ textContent ❌ innerHTML</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CODE EXAMPLES -->
+            <div class="card-glass rounded-3xl p-8 md:p-10 border border-purple-500/20">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-3xl">🔧</span>
+                    <h2 class="text-2xl md:text-3xl font-black text-purple-300">Правильные примеры кода</h2>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Example 1 -->
+                    <div class="bg-black/30 p-5 rounded-2xl">
+                        <p class="text-green-400 font-semibold mb-3">✅ Безопасное добавление текста в DOM</p>
+                        <pre class="code-block text-gray-300 text-sm overflow-x-auto">
+<span class="text-red-400">// ❌ ОПАСНО</span>
+div.innerHTML = userComment;
+
+<span class="text-green-400">// ✅ БЕЗОПАСНО</span>
+div.textContent = userComment;
+
+<span class="text-green-400">// ✅ ЕЩЁ БЕЗОПАСНЕЕ</span>
+const textNode = document.createTextNode(userComment);
+div.appendChild(textNode);</pre>
+                    </div>
+
+                    <!-- Example 2 -->
+                    <div class="bg-black/30 p-5 rounded-2xl">
+                        <p class="text-green-400 font-semibold mb-3">✅ Безопасная работа с атрибутами</p>
+                        <pre class="code-block text-gray-300 text-sm overflow-x-auto">
+<span class="text-red-400">// ❌ ОПАСНО (можно внедрить javascript:)</span>
+link.href = userInput;
+
+<span class="text-green-400">// ✅ БЕЗОПАСНО</span>
+link.setAttribute('href', userInput);
+
+<span class="text-green-400">// ✅ С ДОПОЛНИТЕЛЬНОЙ ПРОВЕРКОЙ</span>
+if (!userInput.startsWith('javascript:')) {
+    link.href = userInput;
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUICK CHECKLIST -->
+            <div class="rounded-3xl p-8 border border-emerald-500/20 bg-emerald-500/5">
+                <div class="flex items-start gap-4 flex-wrap md:flex-nowrap">
+                    <div class="text-4xl">✅</div>
+                    <div>
+                        <h2 class="text-2xl font-black text-emerald-400 mb-5">Чек-лист перед релизом</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="flex items-center gap-2 text-gray-300 text-sm">
+                                <span class="text-emerald-400">▸</span> Все пользовательские данные проходят валидацию
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-300 text-sm">
+                                <span class="text-emerald-400">▸</span> Экранирование применяется ПЕРЕД выводом
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-300 text-sm">
+                                <span class="text-emerald-400">▸</span> Отсутствует innerHTML с внешними данными
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-300 text-sm">
+                                <span class="text-emerald-400">▸</span> Настроен CSP (хотя бы report-режим)
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-300 text-sm">
+                                <span class="text-emerald-400">▸</span> Сессионные cookie имеют флаг HttpOnly
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-300 text-sm">
+                                <span class="text-emerald-400">▸</span> DOMPurify для пользовательского HTML
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-300 text-sm">
+                                <span class="text-emerald-400">▸</span> Валидация дублируется на сервере
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-300 text-sm">
+                                <span class="text-emerald-400">▸</span> Безопасные DOM API вместо innerHTML
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="text-center py-14 border-t border-white/10">
+            <h3 class="text-2xl font-black text-red-400 mb-3">
+                XSS SHIELD
+            </h3>
+            <p class="text-gray-500 text-sm">
+                 <a href class="text-gray-300 text-sm"="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">
+
+                        OWASP Cheat Sheet • Security Learning • Quick Reference for Developers
+
+                    </a>
+            </p>
+            
+                
+        
+                <p class="text-gray-400 mb-6">
+
+                    Исследование и защита от
+                    Cross-Site Scripting атак.
+
+                </p>
+
+                <div class="flex justify-center gap-6
+                    text-gray-500 text-sm">
+
+                    <a href="https://github.com/RuslanSadvakasov"
+                        class="hover:text-red-400 transition">
+
+                        GitHub
+
+                    </a>
+
+                    <a href="https://t.me/sadvakasovruslan"
+                        class="hover:text-red-400 transition">
+
+                        Telegram
+
+                    </a>
+
+                </div>
+
+                <p class="text-gray-500 text-sm mt-8">
+
+                    © 2026 Sadvakasov Ruslan
+
+                </p>
+
+            
+        </footer>
+
+    </div>
+
+</body>
+
+</html>
