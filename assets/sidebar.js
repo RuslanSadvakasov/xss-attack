@@ -94,7 +94,7 @@
     window.addEventListener('resize', applyLayout);
     applyLayout();
 
-    const current = window.location.pathname.split('/').pop() || 'index.html';
+    const current = window.location.pathname.split('/').pop() || 'overview.html';
     document.querySelectorAll('.sidebar-link').forEach((link) => {
       const href = link.getAttribute('href');
       if (href && (href === current || href.endsWith('/' + current))) {
