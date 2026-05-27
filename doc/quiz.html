@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>XSS SHIELD | Тесты</title>
     <link rel="stylesheet" href="../assets/tailwind.css" />
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; 
+                   script-src 'self' 'unsafe-inline'; 
+                   style-src 'self' 'unsafe-inline';
+                   object-src 'none'">
+    <link rel="shortcut icon" href="assets/images/favicon.ico">
     <link rel="stylesheet" href="../style.css" />
 </head>
 <body class="text-white font-sans antialiased bg-grid relative doc-page">
